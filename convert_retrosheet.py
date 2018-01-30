@@ -52,14 +52,17 @@ class Schedule():
         json.dumps(self.schedule)
 
 
-def read_zip_file(zip_file, **csv_kwargs):
+def read_zip_file(zip_file, fieldnames=None):
     """Retrosheet schedule and game log zip files contain a single file within
     them. Return a CSV reader for that file."""
     with zipfile.ZipFile(zip_file, 'r') as zip:
         first_file = zip.namelist()[0]
         with zip.open(first_file) as file_csv:
             file_contents = io.StringIO(file_csv.read().decode())
-            return csv.DictReader(file_contents, **csv_kwargs)
+            if fieldnames:
+                return csv.DictReader(file_contents, fieldnames)
+            else:
+                return csv.reader(file_contents)
 
 
 def main(argv):
