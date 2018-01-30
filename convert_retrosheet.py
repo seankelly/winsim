@@ -6,6 +6,25 @@ import json
 import sys
 import zipfile
 
+import attr
+
+
+@attr.s
+class BaseRuns():
+    # Components of BaseRuns
+    bb = attr.ib(default=0)
+    cs = attr.ib(default=0)
+    gdp = attr.ib(default=0)
+    h = attr.ib(default=0)
+    hbp = attr.ib(default=0)
+    hr = attr.ib(default=0)
+    ibb = attr.ib(default=0)
+    pa = attr.ib(default=0)
+    sb = attr.ib(default=0)
+    sf = attr.ib(default=0)
+    sh = attr.ib(default=0)
+    tb = attr.ib(default=0)
+
 
 class Team():
     def __init__(self, name):
