@@ -68,6 +68,10 @@ class Team():
         self._add_baseruns('baseruns_defense', defense)
 
 
+class League(Team):
+    def __init__(self, name):
+        super().__init__(name, None)
+
 class Game():
     # Useful offsets for each game log row.
     VISITOR_TEAM = 3
@@ -109,12 +113,15 @@ class Game():
 class Season():
     def __init__(self):
         self.teams = {}
+        self.leagues = {}
 
     def add_game(self, game):
         game = Game(game)
 
         visitor = self.get_team(game.visitor, game.visitor_league)
+        visitor_league = self.get_league(game.visitor_league)
         home = self.get_team(game.home, game.home_league)
+        home_league = self.get_league(game.home_league)
 
         visitor.scored(game.visitor_score)
         visitor.allowed(game.home_score)
@@ -132,6 +139,13 @@ class Season():
         else:
             team = self.teams[team_id]
         return team
+
+    def get_league(self, league_id):
+        if league_id in self.leagues:
+            league = self.leagues[league_id]
+        else:
+            league = self.leagues[league_id] = League(league_id)
+        return league
 
 
 class Schedule():
