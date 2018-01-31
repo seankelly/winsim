@@ -127,6 +127,14 @@ class Season():
         home_league = self.get_league(game.home_league)
         home = self.get_team(game.home, home_league)
 
+        winner = game.winner()
+        if winner == 'home':
+            home.wins += 1
+            visitor.losses += 1
+        elif winner == 'visitor':
+            home.losses += 1
+            visitor.wins += 1
+
         visitor.scored(game.visitor_score)
         visitor.allowed(game.home_score)
         home.scored(game.home_score)
