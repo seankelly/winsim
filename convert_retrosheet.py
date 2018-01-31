@@ -54,6 +54,7 @@ class Team():
             'league': self.league.name,
             'win_percentage': self.win_percentage(),
             'pythagenpat_percentage': self.pythagenpat_percentage(),
+            'baseruns_percentage': self.baseruns_percentage(),
             'wins': self.wins,
             'losses': self.losses,
         }
@@ -63,6 +64,11 @@ class Team():
 
     def pythagenpat_percentage(self):
         return self.calculate_pythagenpat(self.runs_scored, self.runs_allowed, self.games)
+
+    def baseruns_percentage(self):
+        runs_scored = self.baseruns_scored()
+        runs_allowed = self.baseruns_allowed()
+        return self.calculate_pythagenpat(runs_scored, runs_allowed, self.games)
 
     @staticmethod
     def calculate_pythagenpat(runs_scored, runs_allowed, games):
