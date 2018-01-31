@@ -32,6 +32,7 @@ class Team():
         self.name = name
         self.wins = 0
         self.losses = 0
+        self.games = 0
         self.runs_scored = 0
         self.runs_allowed = 0
         self.baseruns_offense = BaseRuns()
@@ -140,6 +141,8 @@ class Season():
         home = self.get_team(game.home, home_league)
 
         winner = game.winner()
+        home.games += 1
+        visitor.games += 1
         if winner == 'home':
             home.wins += 1
             visitor.losses += 1
