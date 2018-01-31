@@ -143,8 +143,8 @@ class Schedule():
             (game['date'], game['visitor'], game['home'])
         )
 
-    def to_json(self):
-        return json.dumps(self.schedule)
+    def summary(self):
+        return self.schedule
 
 
 def read_zip_file(zip_file, fieldnames=None):
@@ -182,6 +182,12 @@ def main(argv):
     # fields that will end up unused.
     for game_log in read_zip_file(gamelogs_zip):
         season.add_game(game_log)
+
+    summary = {
+        'schedule': schedule.summary(),
+    }
+
+    print(json.dumps(summary))
 
 
 if __name__ == '__main__':
