@@ -68,6 +68,7 @@ class Team():
     def baseruns_percentage(self):
         runs_scored = self.baseruns_scored()
         runs_allowed = self.baseruns_allowed()
+        #print(self.name, "RS/G", runs_scored / self.games, "RA/G", runs_allowed / self.games)
         return self.calculate_pythagenpat(runs_scored, runs_allowed, self.games)
 
     @staticmethod
