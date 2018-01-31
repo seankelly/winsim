@@ -118,10 +118,10 @@ class Season():
     def add_game(self, game):
         game = Game(game)
 
-        visitor = self.get_team(game.visitor, game.visitor_league)
         visitor_league = self.get_league(game.visitor_league)
-        home = self.get_team(game.home, game.home_league)
+        visitor = self.get_team(game.visitor, visitor_league)
         home_league = self.get_league(game.home_league)
+        home = self.get_team(game.home, home_league)
 
         visitor.scored(game.visitor_score)
         visitor.allowed(game.home_score)
