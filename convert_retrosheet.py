@@ -39,9 +39,11 @@ class Team():
 
     def scored(self, runs):
         self.runs_scored += runs
+        self.league.runs_scored += runs
 
     def allowed(self, runs):
         self.runs_allowed += runs
+        self.league.runs_allowed += runs
 
     def _add_baseruns(self, attribute, fields):
         baseruns = getattr(self, attribute)
