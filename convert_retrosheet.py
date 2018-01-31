@@ -27,7 +27,9 @@ class BaseRuns():
 
 
 class Team():
-    def __init__(self, name):
+    def __init__(self, name, league):
+        self.league = league
+        self.name = name
         self.wins = 0
         self.losses = 0
         self.runs_scored = 0
@@ -111,17 +113,8 @@ class Season():
     def add_game(self, game):
         game = Game(game)
 
-        visitor = game.visitor
-        if visitor not in self.teams:
-            visitor = self.teams[visitor] = Team(visitor)
-        else:
-            visitor = self.teams[visitor]
-
-        home = game.home
-        if home not in self.teams:
-            home = self.teams[home] = Team(home)
-        else:
-            home = self.teams[home]
+        visitor = self.get_team(game.visitor, game.visitor_league)
+        home = self.get_team(game.home, game.home_league)
 
         visitor.scored(game.visitor_score)
         visitor.allowed(game.home_score)
@@ -132,6 +125,13 @@ class Season():
         visitor.add_baseruns_defense(game.home_offense)
         home.add_baseruns_offense(game.home_offense)
         home.add_baseruns_defense(game.visitor_offense)
+
+    def get_team(self, team_id, team_league):
+        if team_id not in self.teams:
+            team = self.teams[team_id] = Team(team_id, team_league)
+        else:
+            team = self.teams[team_id]
+        return team
 
 
 class Schedule():
