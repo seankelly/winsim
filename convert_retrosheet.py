@@ -252,6 +252,7 @@ def main(argv):
         print("Takes two arguments: schedule.zip and gamelogs.zip", file=sys.stderr)
         sys.exit(1)
 
+    year = check_year(schedule_zip, gamelogs_zip)
     schedule = Schedule()
     schedule_fields = (
         'date', 'game_number', 'day', 'visitor', 'visitor_league',
@@ -274,7 +275,8 @@ def main(argv):
         'teams': teams,
     }
 
-    print(json.dumps(summary))
+    with open('mlb-{}.json'.format(year), 'w') as summary_json:
+        summary_json.write(json.dumps(summary))
 
 
 if __name__ == '__main__':
