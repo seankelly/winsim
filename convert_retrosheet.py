@@ -25,6 +25,16 @@ class BaseRuns():
     sh = attr.ib(default=0)
     tb = attr.ib(default=0)
 
+    def raw(self):
+        # From FanGraphs library page on BaseRuns.
+        a = self.h + self.bb + self.hbp - 0.5*self.ibb - self.hr
+        b = 1.1 * (1.4*self.tb - 0.6*self.h - 3*self.hr +
+                   0.1*(self.bb + self.hbp - self.ibb) +
+                   0.9*(self.sb - self.cs - self.gdp))
+        c = self.pa - self.bb - self.sf - self.sh - self.hbp - self.h + self.cs + self.gdp
+        d = self.hr
+        return (a*b / (b+c)) + d
+
 
 class Team():
     def __init__(self, name, league):
