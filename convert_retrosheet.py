@@ -37,6 +37,15 @@ class Team():
         self.baseruns_offense = BaseRuns()
         self.baseruns_defense = BaseRuns()
 
+    def summary(self):
+        return {
+            'name': self.name,
+            'league': self.league.name,
+            'win_percentage': self.win_percentage(),
+            'wins': self.wins,
+            'losses': self.losses,
+        }
+
     def win_percentage(self):
         return self.wins / (self.wins + self.losses)
 
@@ -212,8 +221,11 @@ def main(argv):
     for game_log in read_zip_file(gamelogs_zip):
         season.add_game(game_log)
 
+    teams = sorted([team.summary() for team in season.teams.values()],
+                   key=lambda team: team['name'])
     summary = {
         'schedule': schedule.summary(),
+        'teams': teams,
     }
 
     print(json.dumps(summary))
