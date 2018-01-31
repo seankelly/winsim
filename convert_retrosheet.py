@@ -62,8 +62,12 @@ class Team():
         return self.wins / (self.wins + self.losses)
 
     def pythagenpat_percentage(self):
-        exponent = ((self.runs_scored + self.runs_allowed) / self.games) ** 0.287
-        return 1 / (1 + (self.runs_allowed / self.runs_scored) ** exponent)
+        return self.calculate_pythagenpat(self.runs_scored, self.runs_allowed, self.games)
+
+    @staticmethod
+    def calculate_pythagenpat(runs_scored, runs_allowed, games):
+        exponent = ((runs_scored + runs_allowed) / games) ** 0.287
+        return 1 / (1 + (runs_allowed / runs_scored) ** exponent)
 
     def scored(self, runs):
         self.runs_scored += runs
