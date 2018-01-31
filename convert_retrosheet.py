@@ -3,6 +3,7 @@
 import csv
 import io
 import json
+import os.path
 import sys
 import zipfile
 
@@ -230,6 +231,18 @@ def read_zip_file(zip_file, fieldnames=None):
             else:
                 return csv.reader(file_contents)
 
+
+def check_year(schedule_zip, gamelogs_zip):
+    schedule_zip_file = os.path.basename(schedule_zip)
+    gamelogs_zip_file = os.path.basename(gamelogs_zip)
+    schedule_year = schedule_zip_file[:4]
+    gamelogs_year = gamelogs_zip_file[2:6]
+
+    if schedule_year != gamelogs_year:
+        print("Year for the schedule ({}) does not match game logs year ({})".format(
+            schedule_year, gamelogs_year), file=sys.stderr)
+        sys.exit(1)
+    return schedule_year
 
 def main(argv):
     try:
