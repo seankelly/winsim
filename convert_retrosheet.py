@@ -43,12 +43,17 @@ class Team():
             'name': self.name,
             'league': self.league.name,
             'win_percentage': self.win_percentage(),
+            'pythagenpat_percentage': self.pythagenpat_percentage(),
             'wins': self.wins,
             'losses': self.losses,
         }
 
     def win_percentage(self):
         return self.wins / (self.wins + self.losses)
+
+    def pythagenpat_percentage(self):
+        exponent = ((self.runs_scored + self.runs_allowed) / self.games) ** 0.287
+        return 1 / (1 + (self.runs_allowed / self.runs_scored) ** exponent)
 
     def scored(self, runs):
         self.runs_scored += runs
