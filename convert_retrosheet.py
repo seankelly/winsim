@@ -37,6 +37,9 @@ class Team():
         self.baseruns_offense = BaseRuns()
         self.baseruns_defense = BaseRuns()
 
+    def win_percentage(self):
+        return self.wins / (self.wins + self.losses)
+
     def scored(self, runs):
         self.runs_scored += runs
         self.league.runs_scored += runs
