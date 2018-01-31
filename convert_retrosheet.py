@@ -99,6 +99,14 @@ class Team():
         self._add_baseruns('baseruns_defense', defense)
         self.league._add_baseruns('baseruns_defense', defense)
 
+    def baseruns_scored(self):
+        league_adjust = self.league.runs_scored / self.league.baseruns_offense.raw()
+        return self.baseruns_offense.raw() * league_adjust
+
+    def baseruns_allowed(self):
+        league_adjust = self.league.runs_allowed / self.league.baseruns_defense.raw()
+        return self.baseruns_defense.raw() * league_adjust
+
 
 class League(Team):
     def __init__(self, name):
