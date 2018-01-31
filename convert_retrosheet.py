@@ -133,9 +133,7 @@ class Game():
     HOME_SCORE = 10
 
     VISITOR_OFFENSE = (21, 38)
-    VISITOR_PITCHING = (38, 43)
     HOME_OFFENSE = (49, 66)
-    HOME_PITCHING = (66, 70)
 
     def __init__(self, game):
         self.visitor = game[self.VISITOR_TEAM]
@@ -145,9 +143,7 @@ class Game():
         self.visitor_score = int(game[self.VISITOR_SCORE])
         self.home_score = int(game[self.HOME_SCORE])
         self.visitor_offense = self.intify(game[self.VISITOR_OFFENSE[0]:self.VISITOR_OFFENSE[1]])
-        self.visitor_pitching = self.intify(game[self.VISITOR_PITCHING[0]:self.VISITOR_PITCHING[1]])
         self.home_offense = self.intify(game[self.HOME_OFFENSE[0]:self.HOME_OFFENSE[1]])
-        self.home_pitching = self.intify(game[self.HOME_PITCHING[0]:self.HOME_PITCHING[1]])
 
     @staticmethod
     def intify(fields):
