@@ -87,13 +87,13 @@ class Game():
         self.home_league = game[self.HOME_LEAGUE]
         self.visitor_score = int(game[self.VISITOR_SCORE])
         self.home_score = int(game[self.HOME_SCORE])
-        self.visitor_offense = self.initify(game[self.VISITOR_OFFENSE[0]:self.VISITOR_OFFENSE[1]])
-        self.visitor_pitching = self.initify(game[self.VISITOR_PITCHING[0]:self.VISITOR_PITCHING[1]])
-        self.home_offense = self.initify(game[self.HOME_OFFENSE[0]:self.HOME_OFFENSE[1]])
-        self.home_pitching = self.initify(game[self.HOME_PITCHING[0]:self.HOME_PITCHING[1]])
+        self.visitor_offense = self.intify(game[self.VISITOR_OFFENSE[0]:self.VISITOR_OFFENSE[1]])
+        self.visitor_pitching = self.intify(game[self.VISITOR_PITCHING[0]:self.VISITOR_PITCHING[1]])
+        self.home_offense = self.intify(game[self.HOME_OFFENSE[0]:self.HOME_OFFENSE[1]])
+        self.home_pitching = self.intify(game[self.HOME_PITCHING[0]:self.HOME_PITCHING[1]])
 
     @staticmethod
-    def initify(fields):
+    def intify(fields):
         return [int(field) for field in fields]
 
     def winner(self):
