@@ -63,9 +63,11 @@ class Team():
 
     def add_baseruns_offense(self, offense):
         self._add_baseruns('baseruns_offense', offense)
+        self.league._add_baseruns('baseruns_offense', offense)
 
     def add_baseruns_defense(self, defense):
         self._add_baseruns('baseruns_defense', defense)
+        self.league._add_baseruns('baseruns_defense', defense)
 
 
 class League(Team):
