@@ -121,7 +121,7 @@ class Game():
     def winner(self):
         if self.visitor_score > self.home_score:
             return 'visitor'
-        elif self.home_score < self.visitor_score:
+        elif self.home_score > self.visitor_score:
             return 'home'
         return 'tie'
 
