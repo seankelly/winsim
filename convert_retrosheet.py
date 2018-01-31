@@ -144,7 +144,7 @@ class Schedule():
         )
 
     def to_json(self):
-        json.dumps(self.schedule)
+        return json.dumps(self.schedule)
 
 
 def read_zip_file(zip_file, fieldnames=None):
