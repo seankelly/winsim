@@ -5,7 +5,6 @@ function init() {
     jQuery.getJSON('mlb.json')
         .done(function(data) {
             let season_select = document.getElementById('season-select');
-            console.log(data);
             let seasons = document.createDocumentFragment();
             for (let year of data.years) {
                 let option = document.createElement("option");
