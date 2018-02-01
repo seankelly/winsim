@@ -16,7 +16,15 @@ function init() {
 
             let select_text = season_select.children[0] as HTMLOptionElement;
             select_text.disabled = true;
+            season_select.onchange = pick_season;
         });
+}
+
+function pick_season(ev) {
+    let year = ev.target.value;
+    if (!year) {
+        return;
+    }
 }
 
 init();
