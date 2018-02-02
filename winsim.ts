@@ -30,11 +30,11 @@ function load_season(year) {
                 let name = document.createElement("td");
                 name.innerText = team.name;
                 let win = document.createElement("td");
-                win.innerText = team.win_percentage;
+                win.innerText = team.win_percentage.toPrecision(3);
                 let pythagenpat = document.createElement("td");
-                pythagenpat.innerText = team.pythagenpat_percentage;
+                pythagenpat.innerText = team.pythagenpat_percentage.toPrecision(3);
                 let baseruns = document.createElement("td");
-                baseruns.innerText = team.baseruns_percentage;
+                baseruns.innerText = team.baseruns_percentage.toPrecision(3);
 
                 row.appendChild(name);
                 row.appendChild(win)
