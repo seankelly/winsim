@@ -25,9 +25,6 @@ function load_season(year) {
     jQuery.getJSON(season_file)
         .done(function(data) {
             let teams = document.createDocumentFragment();
-            // TODO: Clear body.
-            let body = document.createElement("tbody");
-            teams.appendChild(body);
             for (let team of data.teams) {
                 let row = document.createElement("tr");
                 let name = document.createElement("td");
@@ -43,10 +40,15 @@ function load_season(year) {
                 row.appendChild(win)
                 row.appendChild(pythagenpat)
                 row.appendChild(baseruns)
-                body.appendChild(row);
+                teams.appendChild(row);
             }
-            teams.appendChild(body);
-            document.getElementById("teams").appendChild(teams);
+
+            let teams_table = document.getElementById("teams") as HTMLTableElement;
+            let teams_body = teams_table.tBodies[0];
+            while (teams_body.firstChild) {
+                teams_body.removeChild(teams_body.firstChild);
+            }
+            teams_body.appendChild(teams);
         });
 }
 
