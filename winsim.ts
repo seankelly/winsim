@@ -93,6 +93,19 @@ class Schedule {
     }
 }
 
+class Simulation {
+    iterations: number;
+
+    constructor() {
+        let iterations_input = document.getElementById('number-simulations') as HTMLInputElement;
+        this.iterations = parseFloat(iterations_input.value);
+    }
+
+    run() {
+        console.log("Running " + this.iterations + " simulations.");
+    }
+}
+
 class Team {
     name: string;
     league: string;
@@ -161,7 +174,9 @@ function start_simulations(ev) {
         console.log("No season loaded.");
         return;
     }
-    console.log("running!");
+
+    let simulation = new Simulation();
+    simulation.run();
 }
 
 init();
