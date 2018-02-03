@@ -112,6 +112,10 @@ class Season {
         return this.teams.get(team_name);
     }
 
+    sim() {
+        this.schedule.sim();
+    }
+
     reset() {
         this.schedule.reset();
     }
@@ -124,6 +128,12 @@ class Schedule {
         this.game = [];
         for (let game_data of schedule_data) {
             this.game.push(new Game(game_data));
+        }
+    }
+
+    sim() {
+        for (let game of this.game) {
+            game.sim();
         }
     }
 
@@ -144,9 +154,10 @@ class Simulation {
 
     run() {
         console.log("Running " + this.iterations + " simulations.");
-        for (let iteration = 0; iteration < this.iterations; iteration++) {
+        //for (let iteration = 0; iteration < this.iterations; iteration++) {
+            season.sim();
             season.reset();
-        }
+        //}
     }
 }
 
