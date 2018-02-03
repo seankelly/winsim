@@ -127,6 +127,7 @@ class Team {
 }
 
 let season = null;
+let simulation = null;
 
 function init() {
     let start_button = document.getElementById("start-simulations");
@@ -175,7 +176,7 @@ function start_simulations(ev) {
         return;
     }
 
-    let simulation = new Simulation();
+    simulation = new Simulation();
     simulation.run();
 }
 
