@@ -33,9 +33,13 @@ class Game {
 
         if (Math.random() < away_win_probability) {
             this.sim_result = GameResult.AwayWin;
+            this.away_team.sim_wins += 1;
+            this.home_team.sim_losses += 1;
         }
         else {
             this.sim_result = GameResult.HomeWin;
+            this.away_team.sim_losses += 1;
+            this.home_team.sim_wins += 1;
         }
         return this.sim_result;
     }
