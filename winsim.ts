@@ -17,7 +17,7 @@ class Game {
         this.reset();
     }
 
-    sim() {
+    sim(): GameResult {
         // Use Log5 method to simulate the game. Include home field advantage
         // of 54% for MLB.
 
@@ -37,6 +37,7 @@ class Game {
         else {
             this.sim_result = GameResult.HomeWin;
         }
+        return this.sim_result;
     }
 
     reset() {
