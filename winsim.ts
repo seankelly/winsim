@@ -55,6 +55,31 @@ class Season {
         }
         teams_body.appendChild(teams);
     }
+
+    displaySchedule() {
+        let schedule_dom = document.createDocumentFragment();
+        for (let game of this.schedule.game) {
+            let row = document.createElement("tr");
+            let date = document.createElement("td");
+            date.innerText = game.date;
+            let home = document.createElement("td");
+            home.innerText = game.home_team;
+            let away = document.createElement("td");
+            away.innerText = game.away_team;
+
+            row.appendChild(date);
+            row.appendChild(home)
+            row.appendChild(away)
+            schedule_dom.appendChild(row);
+        }
+
+        let schedule_table = document.getElementById("schedule") as HTMLTableElement;
+        let schedule_body = schedule_table.tBodies[0];
+        while (schedule_body.firstChild) {
+            schedule_body.removeChild(schedule_body.firstChild);
+        }
+        schedule_body.appendChild(schedule_dom);
+    }
 }
 
 class Schedule {
@@ -115,6 +140,7 @@ function load_season(year) {
         .done(function(data) {
             season = new Season(data.teams, data.schedule);
             season.displayTeams();
+            season.displaySchedule();
         });
 }
 
