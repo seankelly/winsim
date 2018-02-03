@@ -1,4 +1,43 @@
+class Season {
+    teams: Team[];
+    schedule: Schedule[];
+
+    constructor(teams, schedule) {
+        this.teams = this.createTeams(teams);
+        this.schedule = schedule;
+    }
+
+    createTeams(teams: any[]) {
+        let _teams = [];
+        for (let team_data of teams) {
+            let team = new Team(team_data);
+            _teams.push(team);
+        }
+        return _teams;
+    }
+}
+
+class Schedule {
+}
+
 class Team {
+    name: string;
+    league: string;
+    win_percentage: number;
+    pythagenpat_percentage: number;
+    baseruns_percentage: number;
+    wins: number;
+    losses: number;
+
+    constructor(team_data: any) {
+        this.name = team_data.name;
+        this.league = team_data.league;
+        this.win_percentage = team_data.win_percentage;
+        this.pythagenpat_percentage = team_data.pythagenpat_percentage;
+        this.baseruns_percentage = team_data.baseruns_percentage;
+        this.wins = team_data.wins;
+        this.losses = team_data.losses;
+    }
 }
 
 function init() {
