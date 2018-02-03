@@ -81,6 +81,16 @@ var Schedule = /** @class */ (function () {
     }
     return Schedule;
 }());
+var Simulation = /** @class */ (function () {
+    function Simulation() {
+        var iterations_input = document.getElementById('number-simulations');
+        this.iterations = parseFloat(iterations_input.value);
+    }
+    Simulation.prototype.run = function () {
+        console.log("Running " + this.iterations + " simulations.");
+    };
+    return Simulation;
+}());
 var Team = /** @class */ (function () {
     function Team(team_data) {
         this.name = team_data.name;
@@ -95,6 +105,8 @@ var Team = /** @class */ (function () {
 }());
 var season = null;
 function init() {
+    var start_button = document.getElementById("start-simulations");
+    start_button.onclick = start_simulations;
     jQuery.getJSON('mlb.json')
         .done(function (data) {
         var season_select = document.getElementById('season-select');
@@ -127,5 +139,13 @@ function pick_season(ev) {
         return;
     }
     load_season(year);
+}
+function start_simulations(ev) {
+    if (season === null) {
+        console.log("No season loaded.");
+        return;
+    }
+    var simulation = new Simulation();
+    simulation.run();
 }
 init();
