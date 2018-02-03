@@ -93,6 +93,10 @@ class Season {
         schedule_body.appendChild(schedule_dom);
     }
 
+    findTeam(team_name: string): Team {
+        return this.teams.get(team_name);
+    }
+
     reset() {
         this.schedule.reset();
     }
