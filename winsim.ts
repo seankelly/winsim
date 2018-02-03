@@ -23,27 +23,26 @@ class Game {
 }
 
 class Season {
-    teams: Team[];
+    teams: Map<string, Team>;
     schedule: Schedule;
 
     constructor(teams, schedule) {
-        this.teams = this.createTeams(teams);
+        this.createTeams(teams);
         this.schedule = new Schedule(schedule);
         this.reset();
     }
 
     createTeams(teams: any[]) {
-        let _teams = [];
+        this.teams = new Map();
         for (let team_data of teams) {
             let team = new Team(team_data);
-            _teams.push(team);
+            this.teams.set(team.name, team);
         }
-        return _teams;
     }
 
     displayTeams() {
         let teams = document.createDocumentFragment();
-        for (let team of this.teams) {
+        for (let team of this.teams.values()) {
             let row = document.createElement("tr");
             let name = document.createElement("td");
             name.innerText = team.name;
