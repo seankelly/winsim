@@ -6,14 +6,14 @@ enum GameResult {
 
 class Game {
     date: string;
-    away_team: string;
-    home_team: string;
+    away_team: Team;
+    home_team: Team;
     sim_result: GameResult;
 
     constructor(game_data: string[]) {
         this.date = game_data[0];
-        this.away_team = game_data[1];
-        this.home_team = game_data[2];
+        this.away_team = season.findTeam(game_data[1]);
+        this.home_team = season.findTeam(game_data[2]);
         this.reset();
     }
 
@@ -75,9 +75,9 @@ class Season {
             let date = document.createElement("td");
             date.innerText = game.date;
             let home = document.createElement("td");
-            home.innerText = game.home_team;
+            home.innerText = game.home_team.name;
             let away = document.createElement("td");
-            away.innerText = game.away_team;
+            away.innerText = game.away_team.name;
 
             row.appendChild(date);
             row.appendChild(home)
