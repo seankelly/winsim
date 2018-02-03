@@ -126,6 +126,9 @@ class Simulation {
 
     run() {
         console.log("Running " + this.iterations + " simulations.");
+        for (let iteration = 0; iteration < this.iterations; iteration++) {
+            season.reset();
+        }
     }
 }
 
