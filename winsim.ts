@@ -14,6 +14,11 @@ class Game {
         this.date = game_data[0];
         this.away_team = game_data[1];
         this.home_team = game_data[2];
+        this.reset();
+    }
+
+    reset() {
+        this.sim_result = GameResult.Unplayed;
     }
 }
 
@@ -24,6 +29,7 @@ class Season {
     constructor(teams, schedule) {
         this.teams = this.createTeams(teams);
         this.schedule = new Schedule(schedule);
+        this.reset();
     }
 
     createTeams(teams: any[]) {
@@ -87,6 +93,10 @@ class Season {
         }
         schedule_body.appendChild(schedule_dom);
     }
+
+    reset() {
+        this.schedule.reset();
+    }
 }
 
 class Schedule {
@@ -96,6 +106,12 @@ class Schedule {
         this.game = [];
         for (let game_data of schedule_data) {
             this.game.push(new Game(game_data));
+        }
+    }
+
+    reset() {
+        for (let game of this.game) {
+            game.reset();
         }
     }
 }
