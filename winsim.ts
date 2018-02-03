@@ -1,7 +1,14 @@
+enum GameResult {
+    Unplayed,
+    AwayWin,
+    HomeWin,
+}
+
 class Game {
     date: string;
     away_team: string;
     home_team: string;
+    sim_result: GameResult;
 
     constructor(game_data: string[]) {
         this.date = game_data[0];
