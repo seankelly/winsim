@@ -30,6 +30,13 @@ class Game {
             (numerator + (1 - this.away_team.win_percentage) * this.home_team.win_percentage * (1 - hfa))
         );
         console.log(this.date + ": " + this.away_team.name + " vs " + this.home_team.name + ": " + away_win_probability.toPrecision(3))
+
+        if (Math.random() < away_win_probability) {
+            this.sim_result = GameResult.AwayWin;
+        }
+        else {
+            this.sim_result = GameResult.HomeWin;
+        }
     }
 
     reset() {
