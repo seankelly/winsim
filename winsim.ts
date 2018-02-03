@@ -17,6 +17,21 @@ class Game {
         this.reset();
     }
 
+    sim() {
+        // Use Log5 method to simulate the game. Include home field advantage
+        // of 54% for MLB.
+
+        let hfa = 0.54;
+
+        let numerator = (this.away_team.win_percentage * (1 - this.home_team.win_percentage) * hfa);
+        let away_win_probability = (
+            numerator
+            /
+            (numerator + (1 - this.away_team.win_percentage) * this.home_team.win_percentage * (1 - hfa))
+        );
+        console.log(this.date + ": " + this.away_team.name + " vs " + this.home_team.name + ": " + away_win_probability.toPrecision(3))
+    }
+
     reset() {
         this.sim_result = GameResult.Unplayed;
     }
