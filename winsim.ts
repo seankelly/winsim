@@ -124,8 +124,14 @@ class Season {
         return this.teams.get(team_name);
     }
 
-    sim() {
+    sim(): Map<string, number[]> {
         this.schedule.sim();
+
+        let sim_results = new Map();
+        for (let team of this.teams.values()) {
+            sim_results.set(team.name, [team.sim_wins, team.sim_losses]);
+        }
+        return sim_results;
     }
 
     reset() {
@@ -169,10 +175,12 @@ class Simulation {
 
     run() {
         console.log("Running " + this.iterations + " simulations.");
-        //for (let iteration = 0; iteration < this.iterations; iteration++) {
-            season.sim();
+        let seasons = [];
+        for (let iteration = 0; iteration < this.iterations; iteration++) {
+            let results = season.sim();
+            seasons.push(results);
             season.reset();
-        //}
+        }
     }
 }
 
