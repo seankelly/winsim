@@ -1,10 +1,22 @@
+class Game {
+    date: string;
+    away_team: string;
+    home_team: string;
+
+    constructor(game_data: string[]) {
+        this.date = game_data[0];
+        this.away_team = game_data[1];
+        this.home_team = game_data[2];
+    }
+}
+
 class Season {
     teams: Team[];
-    schedule: Schedule[];
+    schedule: Schedule;
 
     constructor(teams, schedule) {
         this.teams = this.createTeams(teams);
-        this.schedule = schedule;
+        this.schedule = new Schedule(schedule);
     }
 
     createTeams(teams: any[]) {
@@ -18,6 +30,14 @@ class Season {
 }
 
 class Schedule {
+    game: Game[];
+
+    constructor(schedule_data: string[][]) {
+        this.game = [];
+        for (let game_data of schedule_data) {
+            this.game.push(new Game(game_data));
+        }
+    }
 }
 
 class Team {
