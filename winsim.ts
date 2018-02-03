@@ -10,7 +10,7 @@ class Game {
     home_team: Team;
     sim_result: GameResult;
 
-    constructor(game_data: string[]) {
+    constructor(game_data: string[], season) {
         this.date = game_data[0];
         this.away_team = season.findTeam(game_data[1]);
         this.home_team = season.findTeam(game_data[2]);
@@ -43,7 +43,7 @@ class Season {
 
     constructor(teams, schedule) {
         this.createTeams(teams);
-        this.schedule = new Schedule(schedule);
+        this.schedule = new Schedule(schedule, this);
         this.reset();
     }
 
@@ -124,10 +124,10 @@ class Season {
 class Schedule {
     game: Game[];
 
-    constructor(schedule_data: string[][]) {
+    constructor(schedule_data: string[][], season: Season) {
         this.game = [];
         for (let game_data of schedule_data) {
-            this.game.push(new Game(game_data));
+            this.game.push(new Game(game_data, season));
         }
     }
 
