@@ -10,10 +10,8 @@ script:
   - tsc winsim.ts
 
 deploy:
-  provider: pages
+  provider: script
   skip-cleanup: true
-  target-branch: gh-pages
-  github-token: $GITHUB_TOKEN
-  keep-history: true
+  script: ./deploy.sh
   on:
     branch: master
