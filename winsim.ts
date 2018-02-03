@@ -126,6 +126,9 @@ class Season {
 
     reset() {
         this.schedule.reset();
+        for (let team of this.teams.values()) {
+            team.reset();
+        }
     }
 }
 
@@ -177,6 +180,8 @@ class Team {
     baseruns_percentage: number;
     wins: number;
     losses: number;
+    sim_wins: number;
+    sim_losses: number;
 
     constructor(team_data: any) {
         this.name = team_data.name;
@@ -186,6 +191,12 @@ class Team {
         this.baseruns_percentage = team_data.baseruns_percentage;
         this.wins = team_data.wins;
         this.losses = team_data.losses;
+        this.reset();
+    }
+
+    reset() {
+        this.sim_wins = 0;
+        this.sim_losses = 0;
     }
 }
 
