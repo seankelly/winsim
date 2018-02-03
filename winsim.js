@@ -5,11 +5,21 @@ var GameResult;
     GameResult[GameResult["HomeWin"] = 2] = "HomeWin";
 })(GameResult || (GameResult = {}));
 class Game {
-    constructor(game_data) {
+    constructor(game_data, season) {
         this.date = game_data[0];
-        this.away_team = game_data[1];
-        this.home_team = game_data[2];
+        this.away_team = season.findTeam(game_data[1]);
+        this.home_team = season.findTeam(game_data[2]);
         this.reset();
+    }
+    sim() {
+        // Use Log5 method to simulate the game. Include home field advantage
+        // of 54% for MLB.
+        let hfa = 0.54;
+        let numerator = (this.away_team.win_percentage * (1 - this.home_team.win_percentage) * hfa);
+        let away_win_probability = (numerator
+            /
+                (numerator + (1 - this.away_team.win_percentage) * this.home_team.win_percentage * (1 - hfa)));
+        console.log(this.date + ": " + this.away_team.name + " vs " + this.home_team.name + ": " + away_win_probability.toPrecision(3));
     }
     reset() {
         this.sim_result = GameResult.Unplayed;
@@ -18,13 +28,14 @@ class Game {
 class Season {
     constructor(teams, schedule) {
         this.createTeams(teams);
-        this.schedule = new Schedule(schedule);
+        this.schedule = new Schedule(schedule, this);
         this.reset();
     }
     createTeams(teams) {
+        this.teams = new Map();
         for (let team_data of teams) {
             let team = new Team(team_data);
-            this.teams[team.name] = team;
+            this.teams.set(team.name, team);
         }
     }
     displayTeams() {
@@ -59,9 +70,9 @@ class Season {
             let date = document.createElement("td");
             date.innerText = game.date;
             let home = document.createElement("td");
-            home.innerText = game.home_team;
+            home.innerText = game.home_team.name;
             let away = document.createElement("td");
-            away.innerText = game.away_team;
+            away.innerText = game.away_team.name;
             row.appendChild(date);
             row.appendChild(home);
             row.appendChild(away);
@@ -77,15 +88,23 @@ class Season {
     findTeam(team_name) {
         return this.teams.get(team_name);
     }
+    sim() {
+        this.schedule.sim();
+    }
     reset() {
         this.schedule.reset();
     }
 }
 class Schedule {
-    constructor(schedule_data) {
+    constructor(schedule_data, season) {
         this.game = [];
         for (let game_data of schedule_data) {
-            this.game.push(new Game(game_data));
+            this.game.push(new Game(game_data, season));
+        }
+    }
+    sim() {
+        for (let game of this.game) {
+            game.sim();
         }
     }
     reset() {
@@ -101,9 +120,10 @@ class Simulation {
     }
     run() {
         console.log("Running " + this.iterations + " simulations.");
-        for (let iteration = 0; iteration < this.iterations; iteration++) {
-            season.reset();
-        }
+        //for (let iteration = 0; iteration < this.iterations; iteration++) {
+        season.sim();
+        season.reset();
+        //}
     }
 }
 class Team {
