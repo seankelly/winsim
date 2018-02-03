@@ -116,6 +116,9 @@ class Team {
 let season = null;
 
 function init() {
+    let start_button = document.getElementById("start-simulations");
+    start_button.onclick = start_simulations;
+
     jQuery.getJSON('mlb.json')
         .done(function(data) {
             let season_select = document.getElementById('season-select');
@@ -151,6 +154,14 @@ function pick_season(ev) {
     }
 
     load_season(year);
+}
+
+function start_simulations(ev) {
+    if (season === null) {
+        console.log("No season loaded.");
+        return;
+    }
+    console.log("running!");
 }
 
 init();
