@@ -165,14 +165,9 @@ class Simulation {
     }
 
     run() {
-        let run_button = document.getElementById('start-simulations') as HTMLInputElement;
-        run_button.disabled = true;
-        let run_button_text = run_button.value;
-
         console.log("Running " + this.iterations + " simulations.");
         let seasons = [];
         for (let iteration = 0; iteration < this.iterations; iteration++) {
-            run_button.value = "Iteration " + iteration;
             let results = season.sim();
             seasons.push(results);
             season.reset();
@@ -180,8 +175,6 @@ class Simulation {
 
         this.last_simulation = seasons;
         this.displaySimulation();
-        run_button.disabled = false;
-        run_button.value = run_button_text;
     }
 
     // Convert all of the seasons into how each team did.
