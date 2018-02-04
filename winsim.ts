@@ -156,20 +156,79 @@ class Schedule {
 
 class Simulation {
     iterations: number;
+    last_simulation: Map<string, TeamSeason>[];
 
     constructor() {
         let iterations_input = document.getElementById('number-simulations') as HTMLInputElement;
         this.iterations = parseFloat(iterations_input.value);
+        this.last_simulation = null;
     }
 
     run() {
+        let run_button = document.getElementById('start-simulations') as HTMLInputElement;
+        run_button.disabled = true;
+        let run_button_text = run_button.value;
+
         console.log("Running " + this.iterations + " simulations.");
         let seasons = [];
         for (let iteration = 0; iteration < this.iterations; iteration++) {
+            run_button.value = "Iteration " + iteration;
             let results = season.sim();
             seasons.push(results);
             season.reset();
         }
+
+        this.last_simulation = seasons;
+        this.displaySimulation();
+        run_button.disabled = false;
+        run_button.value = run_button_text;
+    }
+
+    // Convert all of the seasons into how each team did.
+    summarizeSimulation(simulation: Map<string, TeamSeason>[]): Map<string, TeamSeason[]> {
+        let teams = new Map();
+        for (let season of simulation) {
+            for (let [team_name, team_season] of season) {
+                if (!teams.has(team_name)) {
+                    teams.set(team_name, [team_season]);
+                }
+                else {
+                    let all_seasons = teams.get(team_name);
+                    all_seasons.push(team_season);
+                    teams.set(team_name, all_seasons);
+                }
+            }
+        }
+        return teams;
+    }
+
+    displaySimulation() {
+        function cmp(a: TeamSeason, b: TeamSeason): number {
+            let a_percent = a.wins / (a.wins + a.losses);
+            let b_percent = b.wins / (b.wins + b.losses);
+            return a_percent - b_percent;
+        }
+
+        let sim_summary = this.summarizeSimulation(this.last_simulation);
+        // Put the teams in order for the results.
+        let teams = Array.from(sim_summary.keys()).sort();
+        let results_table = [];
+        for (let team of teams) {
+            let all_seasons = sim_summary.get(team);
+            all_seasons.sort(cmp);
+            let p05 = Math.floor(all_seasons.length * 0.05);
+            let p25 = Math.floor(all_seasons.length * 0.25);
+            let median = Math.floor(all_seasons.length / 2);
+            let p75 = Math.floor(all_seasons.length * 0.75);
+            let p95 = Math.floor(all_seasons.length * 0.95);
+            let best = all_seasons.length - 1;
+            results_table.push([
+                team, all_seasons[0],
+                all_seasons[p05], all_seasons[p25], all_seasons[median],
+                all_seasons[p75], all_seasons[p95], all_seasons[best],
+            ]);
+        }
+        createTable('results', results_table);
     }
 }
 
