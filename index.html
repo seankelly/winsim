@@ -42,6 +42,12 @@
                     <h2>Results</h2>
                     <label for="number-simulations">Number of iterations:</label>
                     <input id="number-simulations" type="number" value="1000">
+                    <label for="win-method">Win percentage to use:</label>
+                    <select id="win-method">
+                        <option value="win">Season win %</option>
+                        <option value="pythagenpat">Pythagenpat</option>
+                        <option value="baseruns">BaseRuns</option>
+                    </select>
                     <input id="start-simulations" type="button" value="Run Simulations">
                     <table id="results" class="table table-striped">
                         <thead>
