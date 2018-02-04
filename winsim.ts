@@ -124,12 +124,12 @@ class Season {
         return this.teams.get(team_name);
     }
 
-    sim(): Map<string, number[]> {
+    sim(): Map<string, TeamSeason> {
         this.schedule.sim();
 
         let sim_results = new Map();
         for (let team of this.teams.values()) {
-            sim_results.set(team.name, [team.sim_wins, team.sim_losses]);
+            sim_results.set(team.name, new TeamSeason(team.sim_wins, team.sim_losses));
         }
         return sim_results;
     }
