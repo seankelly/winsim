@@ -19,7 +19,18 @@ class Game {
         let away_win_probability = (numerator
             /
                 (numerator + (1 - this.away_team.win_percentage) * this.home_team.win_percentage * (1 - hfa)));
-        console.log(this.date + ": " + this.away_team.name + " vs " + this.home_team.name + ": " + away_win_probability.toPrecision(3));
+        //console.log(this.date + ": " + this.away_team.name + " vs " + this.home_team.name + ": " + away_win_probability.toPrecision(3))
+        if (Math.random() < away_win_probability) {
+            this.sim_result = GameResult.AwayWin;
+            this.away_team.sim_wins += 1;
+            this.home_team.sim_losses += 1;
+        }
+        else {
+            this.sim_result = GameResult.HomeWin;
+            this.away_team.sim_losses += 1;
+            this.home_team.sim_wins += 1;
+        }
+        return this.sim_result;
     }
     reset() {
         this.sim_result = GameResult.Unplayed;
@@ -39,60 +50,52 @@ class Season {
         }
     }
     displayTeams() {
-        let teams = document.createDocumentFragment();
+        let teams_table = [];
         for (let team of this.teams.values()) {
-            let row = document.createElement("tr");
-            let name = document.createElement("td");
-            name.innerText = team.name;
-            let win = document.createElement("td");
-            win.innerText = team.win_percentage.toPrecision(3);
-            let pythagenpat = document.createElement("td");
-            pythagenpat.innerText = team.pythagenpat_percentage.toPrecision(3);
-            let baseruns = document.createElement("td");
-            baseruns.innerText = team.baseruns_percentage.toPrecision(3);
-            row.appendChild(name);
-            row.appendChild(win);
-            row.appendChild(pythagenpat);
-            row.appendChild(baseruns);
-            teams.appendChild(row);
+            teams_table.push([team.name, team.win_percentage.toPrecision(3),
+                team.pythagenpat_percentage.toPrecision(3),
+                team.baseruns_percentage.toPrecision(3)]);
         }
-        let teams_table = document.getElementById("teams");
-        let teams_body = teams_table.tBodies[0];
-        while (teams_body.firstChild) {
-            teams_body.removeChild(teams_body.firstChild);
-        }
-        teams_body.appendChild(teams);
+        createTable('teams', teams_table);
     }
     displaySchedule() {
-        let schedule_dom = document.createDocumentFragment();
+        let games_table = [];
         for (let game of this.schedule.game) {
-            let row = document.createElement("tr");
-            let date = document.createElement("td");
-            date.innerText = game.date;
-            let home = document.createElement("td");
-            home.innerText = game.home_team.name;
-            let away = document.createElement("td");
-            away.innerText = game.away_team.name;
-            row.appendChild(date);
-            row.appendChild(home);
-            row.appendChild(away);
-            schedule_dom.appendChild(row);
+            games_table.push([game.date, game.home_team.name, game.away_team.name]);
         }
-        let schedule_table = document.getElementById("schedule");
-        let schedule_body = schedule_table.tBodies[0];
-        while (schedule_body.firstChild) {
-            schedule_body.removeChild(schedule_body.firstChild);
-        }
-        schedule_body.appendChild(schedule_dom);
+        createTable('schedule', games_table);
     }
     findTeam(team_name) {
         return this.teams.get(team_name);
     }
     sim() {
         this.schedule.sim();
+        let sim_results = new Map();
+        for (let team of this.teams.values()) {
+            sim_results.set(team.name, new TeamSeason(team.sim_wins, team.sim_losses));
+        }
+        return sim_results;
     }
     reset() {
         this.schedule.reset();
+        for (let team of this.teams.values()) {
+            team.reset();
+        }
+    }
+}
+class TeamSeason {
+    constructor(wins, losses) {
+        this.wins = wins;
+        this.losses = losses;
+    }
+    toString() {
+        return this.toRecord();
+    }
+    toPercentage() {
+        return (this.wins / (this.wins + this.losses)).toPrecision(3);
+    }
+    toRecord() {
+        return this.wins + "-" + this.losses;
     }
 }
 class Schedule {
@@ -117,13 +120,62 @@ class Simulation {
     constructor() {
         let iterations_input = document.getElementById('number-simulations');
         this.iterations = parseFloat(iterations_input.value);
+        this.last_simulation = null;
     }
     run() {
         console.log("Running " + this.iterations + " simulations.");
-        //for (let iteration = 0; iteration < this.iterations; iteration++) {
-        season.sim();
-        season.reset();
-        //}
+        let seasons = [];
+        for (let iteration = 0; iteration < this.iterations; iteration++) {
+            let results = season.sim();
+            seasons.push(results);
+            season.reset();
+        }
+        this.last_simulation = seasons;
+        this.displaySimulation();
+    }
+    // Convert all of the seasons into how each team did.
+    summarizeSimulation(simulation) {
+        let teams = new Map();
+        for (let season of simulation) {
+            for (let [team_name, team_season] of season) {
+                if (!teams.has(team_name)) {
+                    teams.set(team_name, [team_season]);
+                }
+                else {
+                    let all_seasons = teams.get(team_name);
+                    all_seasons.push(team_season);
+                    teams.set(team_name, all_seasons);
+                }
+            }
+        }
+        return teams;
+    }
+    displaySimulation() {
+        function cmp(a, b) {
+            let a_percent = a.wins / (a.wins + a.losses);
+            let b_percent = b.wins / (b.wins + b.losses);
+            return a_percent - b_percent;
+        }
+        let sim_summary = this.summarizeSimulation(this.last_simulation);
+        // Put the teams in order for the results.
+        let teams = Array.from(sim_summary.keys()).sort();
+        let results_table = [];
+        for (let team of teams) {
+            let all_seasons = sim_summary.get(team);
+            all_seasons.sort(cmp);
+            let p05 = Math.floor(all_seasons.length * 0.05);
+            let p25 = Math.floor(all_seasons.length * 0.25);
+            let median = Math.floor(all_seasons.length / 2);
+            let p75 = Math.floor(all_seasons.length * 0.75);
+            let p95 = Math.floor(all_seasons.length * 0.95);
+            let best = all_seasons.length - 1;
+            results_table.push([
+                team, all_seasons[0],
+                all_seasons[p05], all_seasons[p25], all_seasons[median],
+                all_seasons[p75], all_seasons[p95], all_seasons[best],
+            ]);
+        }
+        createTable('results', results_table);
     }
 }
 class Team {
@@ -135,10 +187,36 @@ class Team {
         this.baseruns_percentage = team_data.baseruns_percentage;
         this.wins = team_data.wins;
         this.losses = team_data.losses;
+        this.reset();
+    }
+    reset() {
+        this.sim_wins = 0;
+        this.sim_losses = 0;
     }
 }
 let season = null;
 let simulation = null;
+function createTable(element_id, rows) {
+    let table = document.getElementById(element_id);
+    let body = table.tBodies[0];
+    let new_body = document.createDocumentFragment();
+    for (let row of rows) {
+        let tr = document.createElement('tr');
+        for (let col of row) {
+            let td = document.createElement('td');
+            td.innerText = col;
+            tr.appendChild(td);
+        }
+        new_body.appendChild(tr);
+    }
+    clearChildren(body);
+    body.appendChild(new_body);
+}
+function clearChildren(element) {
+    while (element.firstChild) {
+        element.removeChild(element.firstChild);
+    }
+}
 function init() {
     let start_button = document.getElementById("start-simulations");
     start_button.onclick = start_simulations;
