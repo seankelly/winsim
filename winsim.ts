@@ -89,9 +89,7 @@ class Season {
 
         let teams_table = document.getElementById("teams") as HTMLTableElement;
         let teams_body = teams_table.tBodies[0];
-        while (teams_body.firstChild) {
-            teams_body.removeChild(teams_body.firstChild);
-        }
+        clearChildren(teams_body);
         teams_body.appendChild(teams);
     }
 
@@ -114,9 +112,7 @@ class Season {
 
         let schedule_table = document.getElementById("schedule") as HTMLTableElement;
         let schedule_body = schedule_table.tBodies[0];
-        while (schedule_body.firstChild) {
-            schedule_body.removeChild(schedule_body.firstChild);
-        }
+        clearChildren(schedule_body);
         schedule_body.appendChild(schedule_dom);
     }
 
@@ -224,6 +220,12 @@ class Team {
 
 let season = null;
 let simulation = null;
+
+function clearChildren(element: HTMLElement) {
+    while (element.firstChild) {
+        element.removeChild(element.firstChild);
+    }
+}
 
 function init() {
     let start_button = document.getElementById("start-simulations");
