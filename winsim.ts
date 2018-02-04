@@ -117,6 +117,18 @@ class TeamSeason {
         this.wins = wins;
         this.losses = losses;
     }
+
+    toString(): string {
+        return this.toRecord();
+    }
+
+    toPercentage(): string {
+        return (this.wins / (this.wins + this.losses)).toPrecision(3);
+    }
+
+    toRecord(): string {
+        return this.wins + "-" + this.losses;
+    }
 }
 
 class Schedule {
