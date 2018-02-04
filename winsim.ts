@@ -142,6 +142,16 @@ class Season {
     }
 }
 
+class TeamSeason {
+    wins: number;
+    losses: number;
+
+    constructor(wins, losses) {
+        this.wins = wins;
+        this.losses = losses;
+    }
+}
+
 class Schedule {
     game: Game[];
 
