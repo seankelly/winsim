@@ -68,52 +68,23 @@ class Season {
     }
 
     displayTeams() {
-        let teams = document.createDocumentFragment();
+        let teams_table = [];
         for (let team of this.teams.values()) {
-            let row = document.createElement("tr");
-            let name = document.createElement("td");
-            name.innerText = team.name;
-            let win = document.createElement("td");
-            win.innerText = team.win_percentage.toPrecision(3);
-            let pythagenpat = document.createElement("td");
-            pythagenpat.innerText = team.pythagenpat_percentage.toPrecision(3);
-            let baseruns = document.createElement("td");
-            baseruns.innerText = team.baseruns_percentage.toPrecision(3);
-
-            row.appendChild(name);
-            row.appendChild(win)
-            row.appendChild(pythagenpat)
-            row.appendChild(baseruns)
-            teams.appendChild(row);
+            teams_table.push([team.name, team.win_percentage.toPrecision(3),
+                              team.pythagenpat_percentage.toPrecision(3),
+                              team.baseruns_percentage.toPrecision(3)]);
         }
 
-        let teams_table = document.getElementById("teams") as HTMLTableElement;
-        let teams_body = teams_table.tBodies[0];
-        clearChildren(teams_body);
-        teams_body.appendChild(teams);
+        createTable('teams', teams_table);
     }
 
     displaySchedule() {
-        let schedule_dom = document.createDocumentFragment();
+        let games_table = [];
         for (let game of this.schedule.game) {
-            let row = document.createElement("tr");
-            let date = document.createElement("td");
-            date.innerText = game.date;
-            let home = document.createElement("td");
-            home.innerText = game.home_team.name;
-            let away = document.createElement("td");
-            away.innerText = game.away_team.name;
-
-            row.appendChild(date);
-            row.appendChild(home)
-            row.appendChild(away)
-            schedule_dom.appendChild(row);
+            games_table.push([game.date, game.home_team.name, game.away_team.name]);
         }
 
-        let schedule_table = document.getElementById("schedule") as HTMLTableElement;
-        let schedule_body = schedule_table.tBodies[0];
-        clearChildren(schedule_body);
-        schedule_body.appendChild(schedule_dom);
+        createTable('schedule', games_table);
     }
 
     findTeam(team_name: string): Team {
@@ -220,6 +191,25 @@ class Team {
 
 let season = null;
 let simulation = null;
+
+function createTable(element_id: string, rows: any[][]) {
+    let table = document.getElementById(element_id) as HTMLTableElement;
+    let body = table.tBodies[0];
+
+    let new_body = document.createDocumentFragment();
+    for (let row of rows) {
+        let tr = document.createElement('tr');
+        for (let col of row) {
+            let td = document.createElement('td');
+            td.innerText = col;
+            tr.appendChild(td);
+        }
+        new_body.appendChild(tr);
+    }
+
+    clearChildren(body);
+    body.appendChild(new_body);
+}
 
 function clearChildren(element: HTMLElement) {
     while (element.firstChild) {
