@@ -11,14 +11,16 @@ class Game {
         this.home_team = season.findTeam(game_data[2]);
         this.reset();
     }
-    sim() {
+    sim(win_property) {
         // Use Log5 method to simulate the game. Include home field advantage
         // of 54% for MLB.
         let hfa = 0.54;
-        let numerator = (this.away_team.win_percentage * (1 - this.home_team.win_percentage) * hfa);
+        let away_win = this.away_team[win_property];
+        let home_win = this.home_team[win_property];
+        let numerator = (away_win * (1 - home_win) * hfa);
         let away_win_probability = (numerator
             /
-                (numerator + (1 - this.away_team.win_percentage) * this.home_team.win_percentage * (1 - hfa)));
+                (numerator + (1 - away_win) * home_win * (1 - hfa)));
         //console.log(this.date + ": " + this.away_team.name + " vs " + this.home_team.name + ": " + away_win_probability.toPrecision(3))
         if (Math.random() < away_win_probability) {
             this.sim_result = GameResult.AwayWin;
@@ -68,8 +70,8 @@ class Season {
     findTeam(team_name) {
         return this.teams.get(team_name);
     }
-    sim() {
-        this.schedule.sim();
+    sim(win_property) {
+        this.schedule.sim(win_property);
         let sim_results = new Map();
         for (let team of this.teams.values()) {
             sim_results.set(team.name, new TeamSeason(team.sim_wins, team.sim_losses));
@@ -105,9 +107,9 @@ class Schedule {
             this.game.push(new Game(game_data, season));
         }
     }
-    sim() {
+    sim(win_property) {
         for (let game of this.game) {
-            game.sim();
+            game.sim(win_property);
         }
     }
     reset() {
@@ -123,10 +125,24 @@ class Simulation {
         this.last_simulation = null;
     }
     run() {
+        // Map the win method into the property to use.
+        let win_method_el = document.getElementById('win-method');
+        let win_method = win_method_el.value;
+        console.log(win_method);
+        let win_property = 'win_percentage';
+        if (win_method === 'win') {
+            win_property = 'win_percentage';
+        }
+        else if (win_method === 'pythagenpat') {
+            win_property = 'pythagenpat_percentage';
+        }
+        else if (win_method === 'baseruns') {
+            win_property = 'baseruns_percentage';
+        }
         console.log("Running " + this.iterations + " simulations.");
         let seasons = [];
         for (let iteration = 0; iteration < this.iterations; iteration++) {
-            let results = season.sim();
+            let results = season.sim(win_property);
             seasons.push(results);
             season.reset();
         }
