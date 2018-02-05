@@ -211,6 +211,8 @@ class Schedule():
         self.schedule = []
 
     def add_game(self, game):
+        if game['visitor'] is None or game['home'] is None:
+            return
         self.schedule.append(
             (game['date'], game['visitor'], game['home'])
         )
