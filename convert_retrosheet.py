@@ -58,6 +58,7 @@ class Team():
             'baseruns_percentage': self.baseruns_percentage(),
             'wins': self.wins,
             'losses': self.losses,
+            'games': self.games,
         }
 
     def win_percentage(self):
