@@ -149,7 +149,13 @@ class Game():
 
     @staticmethod
     def intify(fields):
-        return [int(field) for field in fields]
+        values = []
+        for field in fields:
+            if field:
+                values.append(int(field))
+            else:
+                values.append(0)
+        return values
 
     def winner(self):
         if self.visitor_score > self.home_score:
