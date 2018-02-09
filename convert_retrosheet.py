@@ -65,7 +65,7 @@ class Team():
         }
 
     def win_percentage(self):
-        return self.wins / (self.wins + self.losses)
+        return self.wins / self.games
 
     def pythagenpat_percentage(self):
         return self.calculate_pythagenpat(self.runs_scored, self.runs_allowed, self.games)
