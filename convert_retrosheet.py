@@ -66,6 +66,16 @@ class Team():
             'games': self.games,
         }
 
+    def csv_summary(self):
+        pythag_win_perc, pythag_exponent = self.pythagenpat_percentage()
+        baseruns_win_perc, _, __, ___ = self.baseruns_percentage()
+        summary = ([self.name, self.league.name, self.wins, self.losses,
+                    self.games, self.win_percentage()]
+                   + list(self.pythagenpat_percentage())
+                   + list(self.baseruns_percentage())
+                  )
+        return summary
+
     def win_percentage(self):
         return self.wins / self.games
 
@@ -304,6 +314,13 @@ def main(argv):
         logging.debug("In JSON output mode.")
     elif args.format == 'csv':
         logging.debug("In CSV output mode.")
+        fields = ('year', 'name', 'league', 'wins', 'losses', 'games',
+                  'win_percentage', 'pythagenpat_percentage', 'pythagenpat_exponent',
+                  'baseruns_percentage', 'baseruns_exponent',
+                  'baseruns_runs_scored', 'baseruns_runs_allowed')
+        mlb_history = open('mlb-history.csv', 'w')
+        csv_mlb = csv.writer(mlb_history)
+        csv_mlb.writerow(fields)
 
     for year in args.years:
         logging.debug("Processing year %s", year)
@@ -337,11 +354,10 @@ def main(argv):
             with open('mlb-{}.json'.format(year), 'w') as summary_json:
                 summary_json.write(json.dumps(summary))
         elif args.format == 'csv':
-            pass
-
-    return
-
-
+            rows = sorted([[year] + team.csv_summary()
+                           for team in season.teams.values()],
+                          key=lambda team: team[1])
+            csv_mlb.writerows(rows)
 
 
 if __name__ == '__main__':
