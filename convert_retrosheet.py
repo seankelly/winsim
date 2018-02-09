@@ -52,7 +52,7 @@ class Team():
         self.baseruns_offense = BaseRuns()
         self.baseruns_defense = BaseRuns()
 
-    def summary(self):
+    def json_summary(self):
         return {
             'name': self.name,
             'league': self.league.name,
@@ -227,7 +227,7 @@ class Schedule():
             (game['date'], game['visitor'], game['home'])
         )
 
-    def summary(self):
+    def json_summary(self):
         return self.schedule
 
 
@@ -293,6 +293,11 @@ def main(argv):
     logging.basicConfig(stream=sys.stdout, level=log_level,
                         format='%(asctime)s %(levelname)s - %(message)s')
 
+    if args.format == 'json':
+        logging.debug("In JSON output mode.")
+    elif args.format == 'csv':
+        logging.debug("In CSV output mode.")
+
     for year in args.years:
         logging.debug("Processing year %s", year)
         retrosheet_files = collect_files(year)
@@ -315,17 +320,21 @@ def main(argv):
         for game_log in open_maybe_zip(gamelog_file):
             season.add_game(game_log)
 
+        if args.format == 'json':
+            teams = sorted([team.json_summary() for team in season.teams.values()],
+                           key=lambda team: team['name'])
+            summary = {
+                'schedule': schedule.json_summary(),
+                'teams': teams,
+            }
+            with open('mlb-{}.json'.format(year), 'w') as summary_json:
+                summary_json.write(json.dumps(summary))
+        elif args.format == 'csv':
+            pass
+
     return
 
-    teams = sorted([team.summary() for team in season.teams.values()],
-                   key=lambda team: team['name'])
-    summary = {
-        'schedule': schedule.summary(),
-        'teams': teams,
-    }
 
-    with open('mlb-{}.json'.format(year), 'w') as summary_json:
-        summary_json.write(json.dumps(summary))
 
 
 if __name__ == '__main__':
