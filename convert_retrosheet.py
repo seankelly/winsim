@@ -74,6 +74,12 @@ class Team():
                    + list(self.pythagenpat_percentage())
                    + list(self.baseruns_percentage())
                   )
+
+        def to_precision(field):
+            if isinstance(field, float):
+                return '{:.3}'.format(field)
+            return field
+        summary = [to_precision(field) for field in summary]
         return summary
 
     def win_percentage(self):
