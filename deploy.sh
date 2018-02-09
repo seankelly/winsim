@@ -20,5 +20,6 @@ cp index.html winsim.js _deploy
 
 cd _deploy
 git add .
-git commit --message "Deploy seankelly/winsim@$revision"
-git push --quiet
+if git commit --message "Deploy seankelly/winsim@$revision" ; then
+    git push --quiet
+fi
