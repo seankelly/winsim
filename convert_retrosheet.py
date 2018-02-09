@@ -53,12 +53,14 @@ class Team():
         self.baseruns_defense = BaseRuns()
 
     def json_summary(self):
+        pythag_win_perc, _ = self.pythagenpat_percentage()
+        baseruns_win_perc, _, __, ___ = self.baseruns_percentage()
         return {
             'name': self.name,
             'league': self.league.name,
             'win_percentage': self.win_percentage(),
-            'pythagenpat_percentage': self.pythagenpat_percentage(),
-            'baseruns_percentage': self.baseruns_percentage(),
+            'pythagenpat_percentage': pythag_win_perc,
+            'baseruns_percentage': baseruns_win_perc,
             'wins': self.wins,
             'losses': self.losses,
             'games': self.games,
@@ -74,12 +76,17 @@ class Team():
         runs_scored = self.baseruns_scored()
         runs_allowed = self.baseruns_allowed()
         #print(self.name, "RS/G", runs_scored / self.games, "RA/G", runs_allowed / self.games)
-        return self.calculate_pythagenpat(runs_scored, runs_allowed, self.games)
+        baseruns_win_perc, exponent = self.calculate_pythagenpat(
+            runs_scored, runs_allowed, self.games)
+        runs_scored_game = runs_scored / self.games
+        runs_allowed_game = runs_allowed / self.games
+        return baseruns_win_perc, exponent, runs_scored_game, runs_allowed_game
 
     @staticmethod
     def calculate_pythagenpat(runs_scored, runs_allowed, games):
         exponent = ((runs_scored + runs_allowed) / games) ** 0.287
-        return 1 / (1 + (runs_allowed / runs_scored) ** exponent)
+        win_perc = 1 / (1 + (runs_allowed / runs_scored) ** exponent)
+        return win_perc, exponent
 
     def scored(self, runs):
         self.runs_scored += runs
