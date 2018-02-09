@@ -53,7 +53,7 @@ class Team():
         self.baseruns_defense = BaseRuns()
 
     def json_summary(self):
-        pythag_win_perc, _ = self.pythagenpat_percentage()
+        pythag_win_perc, _, __, ___ = self.pythagenpat_percentage()
         baseruns_win_perc, _, __, ___ = self.baseruns_percentage()
         return {
             'name': self.name,
@@ -67,8 +67,6 @@ class Team():
         }
 
     def csv_summary(self):
-        pythag_win_perc, pythag_exponent = self.pythagenpat_percentage()
-        baseruns_win_perc, _, __, ___ = self.baseruns_percentage()
         summary = ([self.name, self.league.name, self.wins, self.losses,
                     self.games, self.win_percentage()]
                    + list(self.pythagenpat_percentage())
@@ -92,17 +90,15 @@ class Team():
         runs_scored = self.baseruns_scored()
         runs_allowed = self.baseruns_allowed()
         #print(self.name, "RS/G", runs_scored / self.games, "RA/G", runs_allowed / self.games)
-        baseruns_win_perc, exponent = self.calculate_pythagenpat(
-            runs_scored, runs_allowed, self.games)
-        runs_scored_game = runs_scored / self.games
-        runs_allowed_game = runs_allowed / self.games
-        return baseruns_win_perc, exponent, runs_scored_game, runs_allowed_game
+        return self.calculate_pythagenpat(runs_scored, runs_allowed, self.games)
 
     @staticmethod
     def calculate_pythagenpat(runs_scored, runs_allowed, games):
+        runs_scored_game = runs_scored / games
+        runs_allowed_game = runs_allowed / games
         exponent = ((runs_scored + runs_allowed) / games) ** 0.287
         win_perc = 1 / (1 + (runs_allowed / runs_scored) ** exponent)
-        return win_perc, exponent
+        return win_perc, exponent, runs_scored_game, runs_allowed_game
 
     def scored(self, runs):
         self.runs_scored += runs
@@ -321,7 +317,8 @@ def main(argv):
     elif args.format == 'csv':
         logging.debug("In CSV output mode.")
         fields = ('year', 'name', 'league', 'wins', 'losses', 'games',
-                  'win_percentage', 'pythagenpat_percentage', 'pythagenpat_exponent',
+                  'win_percentage', 'pythagenpat_percentage',
+                  'pythagenpat_exponent', 'runs_scored', 'runs_allowed',
                   'baseruns_percentage', 'baseruns_exponent',
                   'baseruns_runs_scored', 'baseruns_runs_allowed')
         mlb_history = open('mlb-history.csv', 'w')
