@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 
+import argparse
 import csv
 import io
 import json
+import logging
+import os
 import os.path
 import sys
 import zipfile
@@ -228,54 +231,91 @@ class Schedule():
         return self.schedule
 
 
-def read_zip_file(zip_file, fieldnames=None):
-    """Retrosheet schedule and game log zip files contain a single file within
-    them. Return a CSV reader for that file."""
-    with zipfile.ZipFile(zip_file, 'r') as zip:
-        first_file = zip.namelist()[0]
-        with zip.open(first_file) as file_csv:
-            file_contents = io.StringIO(file_csv.read().decode())
-            if fieldnames:
-                return csv.DictReader(file_contents, fieldnames)
-            else:
-                return csv.reader(file_contents)
+def options():
+    parser = argparse.ArgumentParser(
+        description="Process Retrosheet schedule and gamelog files.")
+    parser.add_argument('--format', '-f', choices=('json', 'csv'),
+                        help="Output format.")
+    parser.add_argument('--verbose', '-v', action='count',
+                        help="Increase output verbosity.")
+    parser.add_argument('years', nargs='+', help="The years to process.")
+    args = parser.parse_args()
+    return args
 
 
-def check_year(schedule_zip, gamelogs_zip):
-    schedule_zip_file = os.path.basename(schedule_zip)
-    gamelogs_zip_file = os.path.basename(gamelogs_zip)
-    schedule_year = schedule_zip_file[:4]
-    gamelogs_year = gamelogs_zip_file[2:6]
+def collect_files(year):
+    files = os.listdir()
+    # Try to find the schedule file.
+    schedule_file = None
+    for check_file in ('%sSKED.ZIP', '%sSKED.TXT'):
+        file_name = check_file % year
+        if os.path.exists(file_name):
+            schedule_file = file_name
+            break
 
-    if schedule_year != gamelogs_year:
-        print("Year for the schedule ({}) does not match game logs year ({})".format(
-            schedule_year, gamelogs_year), file=sys.stderr)
-        sys.exit(1)
-    return schedule_year
+    # Now try to find the game log file.
+    gamelog_file = None
+    for check_file in ('gl%s.zip', 'GL%s.TXT'):
+        file_name = check_file % year
+        if os.path.exists(file_name):
+            gamelog_file = file_name
+            break
+
+    if schedule_file and gamelog_file:
+        return schedule_file, gamelog_file
+
+def open_maybe_zip(file_path, fieldnames=None):
+    """Check if a file is a zip file and open it using zipfile."""
+    if file_path.endswith('.zip') or file_path.endswith('.ZIP'):
+        with zipfile.ZipFile(file_path, 'r') as zip:
+            first_file = zip.namelist()[0]
+            with zip.open(first_file) as file_csv:
+                file_contents = io.StringIO(file_csv.read().decode())
+    else:
+        with open(file_path, 'r') as fd:
+            file_contents = fd.read().decode()
+    if fieldnames:
+        return csv.DictReader(file_contents, fieldnames)
+    else:
+        return csv.reader(file_contents)
+
 
 def main(argv):
-    try:
-        _argv0, schedule_zip, gamelogs_zip = argv
-    except ValueError as exc:
-        print(argv)
-        print("Takes two arguments: schedule.zip and gamelogs.zip", file=sys.stderr)
-        sys.exit(1)
+    args = options()
+    log_level = logging.WARNING
+    if args.verbose is None:
+        pass
+    elif args.verbose >= 2:
+        log_level = logging.DEBUG
+    elif args.verbose >= 1:
+        log_level = logging.INFO
 
-    year = check_year(schedule_zip, gamelogs_zip)
-    schedule = Schedule()
-    schedule_fields = (
-        'date', 'game_number', 'day', 'visitor', 'visitor_league',
-        'visitor_game', 'home', 'home_league', 'home_game', 'game_time',
-        'postponement', 'makeup_date'
-    )
-    for schedule_game in read_zip_file(schedule_zip, fieldnames=schedule_fields):
-        schedule.add_game(schedule_game)
+    logging.basicConfig(stream=sys.stdout, level=log_level,
+                        format='%(asctime)s %(levelname)s - %(message)s')
 
-    season = Season()
-    # There are 160 fields for each line of the game logs. That is far too many
-    # fields that will end up unused.
-    for game_log in read_zip_file(gamelogs_zip):
-        season.add_game(game_log)
+    for year in args.years:
+        logging.debug("Processing year %s", year)
+        retrosheet_files = collect_files(year)
+        if not retrosheet_files:
+            logging.warn("Could not find any files for year %s", year)
+            continue
+        schedule_file, gamelog_file = retrosheet_files
+        schedule = Schedule()
+        schedule_fields = (
+            'date', 'game_number', 'day', 'visitor', 'visitor_league',
+            'visitor_game', 'home', 'home_league', 'home_game', 'game_time',
+            'postponement', 'makeup_date'
+        )
+        for schedule_game in open_maybe_zip(schedule_file, fieldnames=schedule_fields):
+            schedule.add_game(schedule_game)
+
+        season = Season()
+        # There are 160 fields for each line of the game logs. That is far too many
+        # fields that will end up unused.
+        for game_log in open_maybe_zip(gamelog_file):
+            season.add_game(game_log)
+
+    return
 
     teams = sorted([team.summary() for team in season.teams.values()],
                    key=lambda team: team['name'])
