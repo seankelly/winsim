@@ -75,7 +75,7 @@ class Team():
 
         def to_precision(field):
             if isinstance(field, float):
-                return '{:.3}'.format(field)
+                return '{:.4}'.format(field)
             return field
         summary = [to_precision(field) for field in summary]
         return summary
